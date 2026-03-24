@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workspace — NeuralFlow</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="free-worspace.css">
+</head>
+
+<body>
+
+    <div class="app">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">NeuralFlow</div>
+            <div class="sidebar-section">Workspace</div>
+            <div class="sidebar-item active"><span class="icon">🏠</span> Home</div>
+            <div class="sidebar-item"><span class="icon">🧠</span> AI Chat</div>
+            <div class="sidebar-item"><span class="icon">⚡</span> Automations</div>
+            <div class="sidebar-item"><span class="icon">📊</span> Analytics</div>
+            <div class="sidebar-section">Tools</div>
+            <div class="sidebar-item"><span class="icon">🔗</span> Integrations</div>
+            <div class="sidebar-item"><span class="icon">👥</span> Team</div>
+            <div class="sidebar-item"><span class="icon">⚙️</span> Settings</div>
+            <div class="sidebar-bottom">
+                <div class="user-info">
+                    <div class="user-av" id="sideAvatar">U</div>
+                    <div class="user-meta">
+                        <div class="name" id="sideName">Loading...</div>
+                        <div class="plan-tag" id="sidePlan">Free plan</div>
+                    </div>
+                </div>
+                <div class="logout-link" onclick="Auth.logout()">Sign out →</div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="main-content">
+            <div class="topbar">
+                <div class="topbar-title">👋 Your Workspace</div>
+                <div class="plan-pill free" id="topPlanPill">Free plan</div>
+            </div>
+
+            <div class="content">
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="label">AI Actions Used</div>
+                        <div class="value" id="actionsUsed">47</div>
+                        <div class="change">↑ 12 this week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Actions Remaining</div>
+                        <div class="value" id="actionsLeft">453</div>
+                        <div class="change" style="color:#9aa4b2;">of 500 total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Integrations</div>
+                        <div class="value">2</div>
+                        <div class="change">of 5 available</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Automations</div>
+                        <div class="value">3</div>
+                        <div class="change">↑ 1 new</div>
+                    </div>
+                </div>
+
+                <!-- Usage bar -->
+                <div class="usage-card">
+                    <div class="usage-header">
+                        <h3>Monthly AI Actions</h3>
+                        <span class="usage-count" id="usageCount">47 / 500</span>
+                    </div>
+                    <div class="usage-bar">
+                        <div class="usage-fill" id="usageFill" style="width:9.4%"></div>
+                    </div>
+                    <div class="usage-footer"><span>0</span><span id="usageMax">500 actions / month</span></div>
+                </div>
+
+                <!-- Upgrade banner (free only) -->
+                <div class="upgrade-banner" id="upgradeBanner">
+                    <div class="ub-text">
+                        <h4>🚀 Unlock unlimited AI actions</h4>
+                        <p>Upgrade to Pro for unlimited actions, 50+ integrations, and priority support.</p>
+                    </div>
+                    <button class="ub-btn" onclick="window.location.href='billing.html'">Upgrade to Pro →</button>
+                </div>
+
+                <!-- AI Chat -->
+                <div class="chat-section">
+                    <div class="chat-header">
+                        <div class="chat-header-dot"></div>
+                        <span class="chat-header-title">AI Assistant</span>
+                        <span class="chat-header-sub">Powered by NeuralFlow</span>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="msg">
+                            <div class="msg-avatar ai">AI</div>
+                            <div class="msg-bubble">Hey! I'm your NeuralFlow AI assistant. Ask me to summarize Slack
+                                messages, draft emails, analyze data, or automate any workflow. What would you like to
+                                do today?</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input class="chat-input" id="chatInput"
+                            placeholder="Ask me anything... e.g. 'Summarize my emails from today'"
+                            onkeydown="if(event.key==='Enter') sendMessage()">
+                        <button class="send-btn" onclick="sendMessage()">Send →</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        Auth.requireAuth('login.html');
+
+        const session = Auth.getSession();
+        if (session) {
+            document.getElementById('sideName').textContent = session.name || session.email;
+            document.getElementById('sideAvatar').textContent = (session.name || 'U')[0].toUpperCase();
+
+            const isPro = session.plan === 'pro';
+            const planLabel = isPro ? 'Pro ⚡' : 'Free plan';
+
+            document.getElementById('sidePlan').textContent = planLabel;
+            if (isPro) document.getElementById('sidePlan').classList.add('pro');
+
+            const pill = document.getElementById('topPlanPill');
+            pill.textContent = planLabel;
+            if (isPro) { pill.classList.remove('free'); pill.classList.add('pro'); }
+
+            // Pro users: hide upgrade banner, show unlimited
+            if (isPro) {
+                document.getElementById('upgradeBanner').classList.add('hidden');
+                document.getElementById('actionsLeft').textContent = '∞';
+                document.getElementById('actionsUsed').textContent = '247';
+                document.getElementById('usageFill').style.width = '0%';
+                document.getElementById('usageCount').textContent = 'Unlimited';
+                document.getElementById('usageMax').textContent = 'Unlimited on Pro ⚡';
+            }
+        }
+
+        // Simple fake AI chat
+        const responses = [
+            "Got it! I'm processing your request...\n\n✓ Done! Here's what I found based on your query.",
+            "Sure thing! I've analyzed the data and prepared a summary for you.\n\n• Key insight 1: Performance is up 18%\n• Key insight 2: 3 action items flagged\n\n✓ Report ready →",
+            "On it! I've connected to your integrations and pulled the latest data.\n\n✓ Task completed successfully.",
+            "Great question! Based on your workspace data:\n\n• Your busiest day is Tuesday\n• Top automation: Email digest\n• Suggested action: Enable Slack integration\n\n✓ Analysis complete.",
+        ];
+        let msgCount = 0;
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const messages = document.getElementById('chatMessages');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // User message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg';
+            userMsg.style.justifyContent = 'flex-end';
+            userMsg.innerHTML = `<div class="msg-bubble user-bubble">${text}</div><div class="msg-avatar user">You</div>`;
+            messages.appendChild(userMsg);
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            // Typing indicator
+            const typing = document.createElement('div');
+            typing.className = 'msg';
+            typing.innerHTML = `<div class="msg-avatar ai">AI</div><div class="msg-bubble" style="display:flex;gap:4px;align-items:center;"><span style="width:6px;height:6px;background:#6b7280;border-radius:50%;display:inline-block;animation:bounce 1.2s infinite;"></span><span style="width:6px;height:6px;background:#6b7280;border-radius:50%;display:inline-block;animation:bounce 1.2s 0.2s infinite;"></span><span style="width:6px;height:6px;background:#6b7280;border-radius:50%;display:inline-block;animation:bounce 1.2s 0.4s infinite;"></span></div>`;
+            messages.appendChild(typing);
+            messages.scrollTop = messages.scrollHeight;
+
+            setTimeout(() => {
+                typing.remove();
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'msg';
+                aiMsg.innerHTML = `<div class="msg-avatar ai">AI</div><div class="msg-bubble">${responses[msgCount % responses.length].replace(/\n/g, '<br>')}</div>`;
+                messages.appendChild(aiMsg);
+                messages.scrollTop = messages.scrollHeight;
+                msgCount++;
+            }, 1400);
+        }
+    </script>
+</body>
+
+</html>

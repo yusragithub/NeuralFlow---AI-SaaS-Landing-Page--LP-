@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — NeuralFlow</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- DASH NAV -->
+    <nav class="dash-nav">
+        <div class="logo">NeuralFlow</div>
+        <div class="dash-nav-right">
+            <div class="user-pill">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Loading...</span>
+            </div>
+            <button class="logout-btn" onclick="Auth.logout()">Sign out</button>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="dash-main">
+        <div class="dash-welcome">
+            <h1>Welcome back, <span class="grad" id="welcomeName">there</span> 👋</h1>
+            <p>Choose your plan to get started — or upgrade anytime.</p>
+        </div>
+
+        <!-- Current plan banner -->
+        <div class="current-plan-banner" id="planBanner">
+            <div class="cpb-left">
+                <div class="cpb-dot"></div>
+                <div class="cpb-text">You're on the <span id="currentPlanLabel">Free</span> plan</div>
+            </div>
+            <button class="cpb-upgrade" onclick="window.location.href='billing.html'" id="upgradeBtn">Upgrade to Pro
+                →</button>
+        </div>
+
+        <!-- Plan Cards -->
+        <div class="plan-grid">
+            <div class="plan-card" onclick="choosePlan('free')">
+                <div class="plan-icon">🚀</div>
+                <div class="plan-name">STARTER</div>
+                <div class="plan-price-big">$0<span>/mo</span></div>
+                <div class="plan-tagline">Perfect for solo users and small experiments. No credit card needed.</div>
+                <ul class="plan-perks">
+                    <li>500 AI actions/month</li>
+                    <li>5 integrations</li>
+                    <li>1 workspace</li>
+                    <li>Community support</li>
+                </ul>
+                <button class="plan-action" id="freePlanBtn">Continue with Free</button>
+            </div>
+
+            <div class="plan-card featured" onclick="choosePlan('pro')">
+                <div class="plan-badge">Most Popular</div>
+                <div class="plan-icon">⚡</div>
+                <div class="plan-name">PRO</div>
+                <div class="plan-price-big">$49<span>/mo</span></div>
+                <div class="plan-tagline">For growing teams that need unlimited power and flexibility.</div>
+                <ul class="plan-perks">
+                    <li>Unlimited AI actions</li>
+                    <li>50+ integrations</li>
+                    <li>5 workspaces</li>
+                    <li>Priority support</li>
+                    <li>Advanced analytics</li>
+                </ul>
+                <button class="plan-action">Upgrade to Pro →</button>
+            </div>
+
+            <div class="plan-card" onclick="window.location.href='mailto:sales@neuralflow.ai'">
+                <div class="plan-icon">🏢</div>
+                <div class="plan-name">ENTERPRISE</div>
+                <div class="plan-price-big" style="font-size:2rem;">Custom</div>
+                <div class="plan-tagline">For large orgs with custom security, compliance, and SLA needs.</div>
+                <ul class="plan-perks">
+                    <li>Everything in Pro</li>
+                    <li>SSO & SCIM</li>
+                    <li>Custom AI models</li>
+                    <li>SLA guarantee</li>
+                    <li>Dedicated CSM</li>
+                </ul>
+                <button class="plan-action">Contact sales →</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script>
+        // Require login
+        Auth.requireAuth('login.html');
+
+        const session = Auth.getSession();
+        if (session) {
+            // Populate UI
+            document.getElementById('welcomeName').textContent = session.name || 'there';
+            document.getElementById('userName').textContent = session.name || session.email;
+            document.getElementById('userAvatar').textContent = (session.name || 'U')[0].toUpperCase();
+            document.getElementById('currentPlanLabel').textContent = session.plan === 'pro' ? 'Pro ⚡' : 'Free';
+
+            // If already pro, hide upgrade banner
+            if (session.plan === 'pro') {
+                document.getElementById('upgradeBtn').style.display = 'none';
+                document.getElementById('freePlanBtn').textContent = 'Currently Active ✓';
+                document.querySelector('.cpb-text').innerHTML = 'You\'re on the <span style="color:#34d399">Pro ⚡</span> plan — enjoy all features!';
+            }
+        }
+
+        function choosePlan(plan) {
+            if (plan === 'free') {
+                window.location.href = 'free-workspace.html';
+            } else if (plan === 'pro') {
+                window.location.href = 'billing.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

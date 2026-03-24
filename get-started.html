@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Started Free — NeuralFlow</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="get-started.css">
+</head>
+
+<body>
+    <div class="auth-page">
+
+        <!-- LEFT -->
+        <div class="auth-left">
+            <div class="auth-left-top"><a href="index.html" class="logo">NeuralFlow</a></div>
+            <div>
+                <div class="auth-tagline">Start building<br>smarter workflows<br><span class="grad">for free.</span>
+                </div>
+                <ul class="perks">
+                    <li>
+                        <div class="perk-icon" style="background:rgba(79,142,255,0.12);">🧠</div>
+                        <div>
+                            <div class="perk-title">500 AI actions free every month</div>
+                            <div class="perk-desc">No time limit. Use it as long as you need before upgrading.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="perk-icon" style="background:rgba(52,211,153,0.12);">⚡</div>
+                        <div>
+                            <div class="perk-title">Connect up to 5 tools instantly</div>
+                            <div class="perk-desc">Slack, Notion, Gmail and more — connected in one click.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="perk-icon" style="background:rgba(167,139,250,0.12);">🔒</div>
+                        <div>
+                            <div class="perk-title">Your data stays yours</div>
+                            <div class="perk-desc">We never train on your data. SOC 2 Type II certified.</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="perk-icon" style="background:rgba(245,158,11,0.12);">🚀</div>
+                        <div>
+                            <div class="perk-title">Up and running in 5 minutes</div>
+                            <div class="perk-desc">No setup, no engineers needed. Just sign up and go.</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="auth-left-bottom">
+                <p style="font-size:0.78rem;color:#6b7280;">© 2025 NeuralFlow Inc. · No credit card required</p>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="auth-right">
+            <div class="auth-form-wrap">
+                <div class="auth-form-header">
+                    <div class="logo">NeuralFlow</div>
+                    <div class="free-badge">✦ Free forever plan available</div>
+                    <h2>Create your account</h2>
+                    <p>Join 12,000+ teams already using NeuralFlow</p>
+                </div>
+
+                <div class="social-btns">
+                    <button class="social-btn" onclick="showToast('Social login coming soon!','info')"><span>G</span>
+                        Google</button>
+                    <button class="social-btn" onclick="showToast('Social login coming soon!','info')"><span>⌘</span>
+                        GitHub</button>
+                </div>
+
+                <div class="divider"><span>or sign up with email</span></div>
+
+                <div class="name-row">
+                    <div class="form-group"><label for="firstName">First name</label><input type="text" id="firstName"
+                            placeholder="James"></div>
+                    <div class="form-group"><label for="lastName">Last name</label><input type="text" id="lastName"
+                            placeholder="Smith"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupEmail">Work email</label>
+                    <input type="email" id="signupEmail" placeholder="you@company.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <div class="pw-wrap">
+                        <input type="password" id="signupPassword" placeholder="Min. 8 characters"
+                            oninput="checkStrength(this.value)">
+                        <button class="pw-toggle" id="pwToggle" type="button">👁</button>
+                    </div>
+                    <div class="pw-strength">
+                        <div class="pw-strength-bar" id="strengthBar"></div>
+                    </div>
+                    <p class="pw-hint" id="strengthHint">Use 8+ characters for a strong password</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="teamSize">Team size</label>
+                    <select id="teamSize">
+                        <option value="" disabled selected>Select team size</option>
+                        <option>Just me</option>
+                        <option>2–10 people</option>
+                        <option>11–50 people</option>
+                        <option>51–200 people</option>
+                        <option>200+ people</option>
+                    </select>
+                </div>
+
+                <p class="terms">By signing up you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy
+                        Policy</a>.</p>
+
+                <button class="submit-btn" id="signupBtn" onclick="handleSignup()">Create free account →</button>
+
+                <p class="auth-switch">Already have an account? <a href="login.html">Sign in</a></p>
+
+                <div class="no-cc">
+                    <span>No credit card required</span>
+                    <span>Cancel anytime</span>
+                    <span>Free forever plan</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Redirect if already logged in
+        Auth.redirectIfLoggedIn('dashboard.html');
+
+        // Password toggle
+        initPasswordToggle('signupPassword', 'pwToggle');
+
+        // Password strength meter
+        function checkStrength(val) {
+            const bar = document.getElementById('strengthBar');
+            const hint = document.getElementById('strengthHint');
+            let score = 0;
+            if (val.length >= 8) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+            const levels = [
+                { w: '0%', bg: 'transparent', text: 'Use 8+ characters for a strong password' },
+                { w: '25%', bg: '#ef4444', text: 'Weak — add uppercase letters' },
+                { w: '50%', bg: '#f59e0b', text: 'Fair — add numbers or symbols' },
+                { w: '75%', bg: '#4f8eff', text: 'Good — almost there!' },
+                { w: '100%', bg: '#34d399', text: 'Strong password ✓' }
+            ];
+            const l = levels[score];
+            bar.style.width = l.w;
+            bar.style.background = l.bg;
+            hint.textContent = l.text;
+            hint.style.color = l.bg === 'transparent' ? '#6b7280' : l.bg;
+        }
+
+        function handleSignup() {
+            const firstName = document.getElementById('firstName');
+            const lastName = document.getElementById('lastName');
+            const email = document.getElementById('signupEmail');
+            const password = document.getElementById('signupPassword');
+            const teamSize = document.getElementById('teamSize');
+            const btn = document.getElementById('signupBtn');
+            let valid = true;
+
+            // Clear errors
+            [firstName, lastName, email, password].forEach(clearError);
+
+            // Validate
+            if (!Validate.required(firstName.value)) { showError(firstName, 'First name is required.'); valid = false; }
+            if (!Validate.required(lastName.value)) { showError(lastName, 'Last name is required.'); valid = false; }
+            if (!Validate.required(email.value)) { showError(email, 'Email is required.'); valid = false; }
+            else if (!Validate.email(email.value)) { showError(email, 'Please enter a valid email address.'); valid = false; }
+            if (!Validate.password(password.value)) { showError(password, 'Password must be at least 8 characters.'); valid = false; }
+
+            if (!valid) return;
+
+            btn.textContent = 'Creating account...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const result = Auth.signup({
+                    firstName: firstName.value,
+                    lastName: lastName.value,
+                    email: email.value,
+                    password: password.value,
+                    teamSize: teamSize.value
+                });
+
+                if (!result.success) {
+                    showToast(result.error, 'error');
+                    showError(email, result.error);
+                    btn.textContent = 'Create free account →';
+                    btn.disabled = false;
+                } else {
+                    showToast('Account created! Welcome to NeuralFlow 🎉', 'success');
+                    // Check if user had an intended plan
+                    const intended = localStorage.getItem('nf_intended_plan');
+                    localStorage.removeItem('nf_intended_plan');
+                    setTimeout(() => {
+                        if (intended === 'pro') window.location.href = 'billing.html';
+                        else window.location.href = 'dashboard.html';
+                    }, 1200);
+                }
+            }, 900);
+        }
+
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') handleSignup(); });
+    </script>
+</body>
+
+</html>

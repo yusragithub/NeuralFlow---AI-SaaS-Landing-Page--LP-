@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing — NeuralFlow</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="billing.css">
+</head>
+
+<body>
+
+    <nav class="dash-nav">
+        <div class="logo">NeuralFlow</div>
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">← Back</button>
+    </nav>
+
+    <div class="billing-main">
+        <!-- LEFT: Form -->
+        <div class="billing-form">
+            <h2>Upgrade to Pro ⚡</h2>
+            <p>You won't be charged until your 14-day trial ends.</p>
+
+            <div class="trial-badge">🎉 14-day free trial — cancel anytime, no questions asked</div>
+
+            <div class="form-section-title">Personal info</div>
+            <div class="form-group"><label>Full name</label><input type="text" id="billName" placeholder="Yusra Yahya">
+            </div>
+            <div class="form-group"><label>Email</label><input type="email" id="billEmail"
+                    placeholder="you@company.com"></div>
+
+            <div class="form-section-title">Payment details</div>
+            <div class="card-icons">
+                <div class="card-icon">VISA</div>
+                <div class="card-icon">MC</div>
+                <div class="card-icon">AMEX</div>
+                <div class="card-icon">PayPal</div>
+            </div>
+            <div class="form-group"><label>Card number</label><input type="text" id="cardNum"
+                    placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"></div>
+            <div class="form-row-2">
+                <div class="form-group"><label>Expiry date</label><input type="text" id="cardExp" placeholder="MM / YY"
+                        maxlength="7" oninput="formatExpiry(this)"></div>
+                <div class="form-group"><label>CVV</label><input type="text" id="cardCvv" placeholder="•••"
+                        maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+            </div>
+
+            <div class="form-section-title">Billing address</div>
+            <div class="form-group"><label>Country</label>
+                <select id="country">
+                    <option value="" disabled selected>Select country</option>
+                    <option>United States</option>
+                    <option>United Kingdom</option>
+                    <option>Pakistan</option>
+                    <option>Canada</option>
+                    <option>Australia</option>
+                    <option>Germany</option>
+                    <option>India</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div class="form-group"><label>ZIP / Postal code</label><input type="text" id="zipCode" placeholder="12345">
+            </div>
+
+            <button class="submit-btn" id="payBtn" onclick="handlePayment()">Start 14-day free trial →</button>
+            <p class="secure-note">🔒 Secured by 256-bit SSL encryption</p>
+        </div>
+
+        <!-- RIGHT: Summary -->
+        <div class="order-summary">
+            <div class="summary-card">
+                <h3>Order Summary</h3>
+                <div class="summary-plan">
+                    <div class="summary-plan-icon">⚡</div>
+                    <div>
+                        <div class="summary-plan-name">NeuralFlow Pro</div>
+                        <div class="summary-plan-billing">Billed monthly</div>
+                    </div>
+                </div>
+                <ul class="summary-items">
+                    <li><span class="item-label">Pro plan</span><span class="item-val">$49.00</span></li>
+                    <li><span class="item-label">14-day trial discount</span><span class="item-val"
+                            style="color:#34d399;">-$49.00</span></li>
+                    <li><span class="item-label">Tax</span><span class="item-val">$0.00</span></li>
+                </ul>
+                <div class="summary-total">
+                    <span class="total-label">Due today</span>
+                    <span class="total-val">$0.00</span>
+                </div>
+                <div class="summary-perks">
+                    <p>What you get with Pro:</p>
+                    <ul>
+                        <li>Unlimited AI actions</li>
+                        <li>50+ integrations</li>
+                        <li>5 workspaces</li>
+                        <li>Priority support</li>
+                        <li>Advanced analytics</li>
+                        <li>Cancel anytime</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-box">
+            <div class="big-icon">🎉</div>
+            <h2>You're on Pro!</h2>
+            <p>Welcome to NeuralFlow Pro. Your 14-day free trial has started. Enjoy unlimited AI actions and all Pro
+                features.</p>
+            <button class="go-btn" onclick="goToWorkspace()">Go to workspace →</button>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        Auth.requireAuth('login.html');
+
+        // Pre-fill name/email from session
+        const session = Auth.getSession();
+        if (session) {
+            if (session.name) document.getElementById('billName').value = session.name;
+            if (session.email) document.getElementById('billEmail').value = session.email;
+        }
+
+        // Card number formatting
+        function formatCard(input) {
+            let val = input.value.replace(/\D/g, '').substring(0, 16);
+            input.value = val.replace(/(.{4})/g, '$1 ').trim();
+        }
+
+        // Expiry formatting
+        function formatExpiry(input) {
+            let val = input.value.replace(/\D/g, '').substring(0, 4);
+            if (val.length >= 2) val = val.substring(0, 2) + ' / ' + val.substring(2);
+            input.value = val;
+        }
+
+        function handlePayment() {
+            const name = document.getElementById('billName');
+            const email = document.getElementById('billEmail');
+            const cardNum = document.getElementById('cardNum');
+            const cardExp = document.getElementById('cardExp');
+            const cardCvv = document.getElementById('cardCvv');
+            const btn = document.getElementById('payBtn');
+            let valid = true;
+
+            [name, email, cardNum, cardExp, cardCvv].forEach(clearError);
+
+            if (!Validate.required(name.value)) { showError(name, 'Full name is required.'); valid = false; }
+            if (!Validate.email(email.value)) { showError(email, 'Valid email is required.'); valid = false; }
+            if (cardNum.value.replace(/\s/g, '').length < 16) { showError(cardNum, 'Please enter a valid 16-digit card number.'); valid = false; }
+            if (cardExp.value.replace(/\s\/\s/g, '').length < 4) { showError(cardExp, 'Please enter a valid expiry date.'); valid = false; }
+            if (cardCvv.value.length < 3) { showError(cardCvv, 'CVV must be 3-4 digits.'); valid = false; }
+
+            if (!valid) return;
+
+            btn.textContent = 'Processing...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                Auth.upgradePlan('pro');
+                document.getElementById('successOverlay').classList.add('show');
+            }, 1800);
+        }
+
+        function goToWorkspace() {
+            window.location.href = 'pro-workspace.html';
+        }
+    </script>
+</body>
+
+</html>
